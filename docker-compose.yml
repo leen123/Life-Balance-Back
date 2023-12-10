@@ -1,0 +1,59 @@
+version: '3.7'
+services:
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'my_life_server'
+    container_name: app
+    ports:
+      - "801:80"
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - app-network
+  #MySQL Service
+  db:
+    image: mysql/mysql-server:latest
+    container_name: db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: 'laraapp_db'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: "@123qwemy_life$"
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - app-network
+  #admin
+  admin:
+      container_name: "circuleoflife-frontend-admin"
+      ports:
+        - "3010:80"
+      image: "circuleoflife-frontend-admin:latest"
+
+  #frontend
+  frontend:
+    container_name: "circuleOfLife-frontend"
+    ports:
+      - "3011:80"
+    image: "circuleoflife-frontend:latest"
+
+  #landing-page
+  # landingpage:
+  #   container_name: "circuleOfLife-frontend-landingpage"
+  #   ports:
+  #     - "3000:3000"
+  #   image: "landing-page:latest"
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  db:
+    driver: local
